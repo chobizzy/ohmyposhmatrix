@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>matrix.omp.json — Oh My Posh Matrix Theme</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:      #00FF41;
+      --green-dim:  #008F11;
+      --green-dark: #003B00;
+      --black:      #000000;
+      --glass:      rgba(0, 10, 0, 0.82);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--black);
+      color: var(--green);
+      font-family: 'Courier New', Courier, monospace;
+      overflow-x: hidden;
+    }
+
+    /* ── Matrix rain canvas ── */
+    #rain {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.35;
+    }
+
+    /* ── Layout ── */
+    main {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 80px 24px 60px;
+      gap: 64px;
+      min-height: 100vh;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .hero-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      color: var(--green-dim);
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 8vw, 5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--green);
+      text-shadow: 0 0 20px #00FF4199, 0 0 60px #00FF4133;
+      line-height: 1.05;
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--green-dim);
+      max-width: 420px;
+      line-height: 1.6;
+    }
+
+    /* ── Terminal ── */
+    .terminal {
+      background: var(--glass);
+      border: 1px solid var(--green-dark);
+      border-radius: 8px;
+      width: 100%;
+      max-width: 680px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 0 40px #00FF4111, inset 0 0 20px #00100500;
+      overflow: hidden;
+    }
+
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: rgba(0, 60, 0, 0.25);
+      border-bottom: 1px solid var(--green-dark);
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--green-dark);
+    }
+
+    .terminal-title {
+      margin-left: 8px;
+      font-size: 0.72rem;
+      color: var(--green-dim);
+      letter-spacing: 0.12em;
+    }
+
+    .terminal-body {
+      padding: 24px 28px;
+      font-size: 0.9rem;
+      line-height: 2;
+    }
+
+    .t-dim   { color: var(--green-dim); }
+    .t-green { color: var(--green); }
+    .t-red   { color: #FF3333; }
+    .t-sep   { color: var(--green-dark); }
+
+    .cursor {
+      display: inline-block;
+      width: 9px;
+      height: 1.1em;
+      background: var(--green);
+      vertical-align: text-bottom;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── Install ── */
+    .install-section {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .section-title {
+      font-size: 0.72rem;
+      letter-spacing: 0.25em;
+      color: var(--green-dim);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+    }
+
+    .tab {
+      background: none;
+      border: 1px solid var(--green-dark);
+      color: var(--green-dim);
+      font-family: inherit;
+      font-size: 0.78rem;
+      padding: 5px 16px;
+      border-radius: 4px 4px 0 0;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.05em;
+    }
+
+    .tab:hover         { color: var(--green); border-color: var(--green-dim); }
+    .tab.active        { color: var(--green); border-color: var(--green); border-bottom-color: var(--black); background: rgba(0,255,65,0.04); }
+
+    .code-block {
+      display: none;
+      background: var(--glass);
+      border: 1px solid var(--green-dim);
+      border-radius: 0 4px 4px 4px;
+      backdrop-filter: blur(6px);
+      overflow: hidden;
+    }
+
+    .code-block.active { display: block; }
+
+    .code-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 20px;
+    }
+
+    .code-inner code {
+      font-size: 0.82rem;
+      color: var(--green);
+      word-break: break-all;
+      flex: 1;
+    }
+
+    .copy-btn {
+      flex-shrink: 0;
+      background: none;
+      border: 1px solid var(--green-dark);
+      color: var(--green-dim);
+      font-family: inherit;
+      font-size: 0.72rem;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .copy-btn:hover  { color: var(--green); border-color: var(--green); }
+    .copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+    /* ── Segments ── */
+    .segments {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .seg-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    @media (max-width: 500px) { .seg-grid { grid-template-columns: 1fr; } }
+
+    .seg-card {
+      border: 1px solid var(--green-dark);
+      border-radius: 6px;
+      padding: 14px 16px;
+      background: rgba(0, 20, 0, 0.5);
+      backdrop-filter: blur(4px);
+      transition: border-color 0.2s;
+    }
+
+    .seg-card:hover { border-color: var(--green-dim); }
+
+    .seg-name {
+      font-size: 0.75rem;
+      color: var(--green);
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+
+    .seg-desc {
+      font-size: 0.72rem;
+      color: var(--green-dim);
+      line-height: 1.5;
+    }
+
+    /* ── Palette ── */
+    .palette {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .swatch-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .swatch {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1px solid var(--green-dark);
+      border-radius: 6px;
+      background: rgba(0,20,0,0.5);
+      backdrop-filter: blur(4px);
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .swatch-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .swatch-info { display: flex; flex-direction: column; gap: 2px; }
+    .swatch-hex  { font-size: 0.8rem; color: var(--green); }
+    .swatch-role { font-size: 0.68rem; color: var(--green-dim); letter-spacing: 0.05em; }
+
+    /* ── CTA buttons ── */
+    .cta-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: var(--black);
+      border: 1px solid var(--green);
+      font-weight: 700;
+    }
+
+    .btn-primary:hover {
+      background: #00cc34;
+      box-shadow: 0 0 20px #00FF4155;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--green);
+      border: 1px solid var(--green);
+    }
+
+    .btn-outline:hover {
+      background: rgba(0,255,65,0.07);
+      box-shadow: 0 0 16px #00FF4133;
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 24px;
+      font-size: 0.72rem;
+      color: var(--green-dark);
+      letter-spacing: 0.1em;
+    }
+
+    footer a { color: var(--green-dim); text-decoration: none; }
+    footer a:hover { color: var(--green); }
+  </style>
+</head>
+<body>
+
+<canvas id="rain"></canvas>
+
+<main>
+
+  <!-- Hero -->
+  <div class="hero">
+    <span class="hero-label">oh-my-posh theme</span>
+    <h1>matrix.omp.json</h1>
+    <p class="hero-sub">
+      Neon green on pure black. A terminal prompt inspired by The Matrix,
+      built for <a href="https://ohmyposh.dev" style="color:var(--green);text-decoration:none">oh-my-posh</a>.
+    </p>
+  </div>
+
+  <!-- Terminal preview -->
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <span class="terminal-title">PowerShell — matrix.omp.json</span>
+    </div>
+    <div class="terminal-body">
+      <div>
+        <span class="t-dim"> </span>
+        <span class="t-green">chobi</span><span class="t-sep">@</span><span class="t-dim">DESKTOP</span>
+        <span class="t-sep"> [</span><span class="t-green">~/Projects/ohmyposhmatrix</span><span class="t-sep">]</span>
+        <span class="t-sep"> (</span><span class="t-green">main ✓</span><span class="t-sep">)</span>
+      </div>
+      <div><span class="t-green">&gt;&gt;</span> git add .</div>
+      <div>
+        <span class="t-dim"> </span>
+        <span class="t-green">chobi</span><span class="t-sep">@</span><span class="t-dim">DESKTOP</span>
+        <span class="t-sep"> [</span><span class="t-green">~/Projects/ohmyposhmatrix</span><span class="t-sep">]</span>
+        <span class="t-sep"> (</span><span class="t-red">main ✗</span><span class="t-sep">)</span>
+      </div>
+      <div><span class="t-green">&gt;&gt;</span> <span class="cursor"></span></div>
+    </div>
+  </div>
+
+  <!-- Install -->
+  <div class="install-section">
+    <div class="section-title">// install</div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(this,'pwsh')">PowerShell</button>
+      <button class="tab"        onclick="switchTab(this,'bash')">Bash / Zsh</button>
+      <button class="tab"        onclick="switchTab(this,'fish')">Fish</button>
+    </div>
+
+    <div id="pwsh" class="code-block active">
+      <div class="code-inner">
+        <code>oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/chobizzy/ohmyposhmatrix/main/matrix.omp.json' | Invoke-Expression</code>
+        <button class="copy-btn" onclick="copy(this)">COPY</button>
+      </div>
+    </div>
+
+    <div id="bash" class="code-block">
+      <div class="code-inner">
+        <code>eval "$(oh-my-posh init bash --config 'https://raw.githubusercontent.com/chobizzy/ohmyposhmatrix/main/matrix.omp.json')"</code>
+        <button class="copy-btn" onclick="copy(this)">COPY</button>
+      </div>
+    </div>
+
+    <div id="fish" class="code-block">
+      <div class="code-inner">
+        <code>oh-my-posh init fish --config 'https://raw.githubusercontent.com/chobizzy/ohmyposhmatrix/main/matrix.omp.json' | source</code>
+        <button class="copy-btn" onclick="copy(this)">COPY</button>
+      </div>
+    </div>
+
+    <p style="font-size:0.72rem;color:var(--green-dim);margin-top:4px;">
+      Requires a <a href="https://www.nerdfonts.com/" style="color:var(--green);">Nerd Font</a> for OS icons.
+      JetBrains Mono Nerd Font recommended.
+    </p>
+  </div>
+
+  <!-- Segments -->
+  <div class="segments">
+    <div class="section-title">// segments</div>
+    <div class="seg-grid">
+      <div class="seg-card">
+        <div class="seg-name">OS ICON</div>
+        <div class="seg-desc">Your operating system's icon via Nerd Font glyphs</div>
+      </div>
+      <div class="seg-card">
+        <div class="seg-name">USER @ HOST</div>
+        <div class="seg-desc">Current user and hostname in accent green</div>
+      </div>
+      <div class="seg-card">
+        <div class="seg-name">[PATH]</div>
+        <div class="seg-desc">Current working directory wrapped in green brackets</div>
+      </div>
+      <div class="seg-card">
+        <div class="seg-name">(BRANCH ✓/✗)</div>
+        <div class="seg-desc">Git branch — green when clean, red when dirty</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Palette -->
+  <div class="palette">
+    <div class="section-title">// palette</div>
+    <div class="swatch-row">
+      <div class="swatch">
+        <div class="swatch-dot" style="background:#00FF41;box-shadow:0 0 8px #00FF4199"></div>
+        <div class="swatch-info">
+          <span class="swatch-hex">#00FF41</span>
+          <span class="swatch-role">Primary</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-dot" style="background:#008F11"></div>
+        <div class="swatch-info">
+          <span class="swatch-hex">#008F11</span>
+          <span class="swatch-role">Accent</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-dot" style="background:#FF3333;box-shadow:0 0 8px #FF333355"></div>
+        <div class="swatch-info">
+          <span class="swatch-hex">#FF3333</span>
+          <span class="swatch-role">Dirty state</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-dot" style="background:#000000;border:1px solid #008F11"></div>
+        <div class="swatch-info">
+          <span class="swatch-hex">#000000</span>
+          <span class="swatch-role">Background</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-row">
+    <a class="btn btn-primary" href="https://github.com/chobizzy/ohmyposhmatrix">
+      &#xe62b; GitHub
+    </a>
+    <a class="btn btn-outline" href="https://raw.githubusercontent.com/chobizzy/ohmyposhmatrix/main/matrix.omp.json" download="matrix.omp.json">
+      ↓ Download theme
+    </a>
+  </div>
+
+</main>
+
+<footer>
+  Built with <a href="https://ohmyposh.dev">oh-my-posh</a> &nbsp;·&nbsp;
+  <a href="https://github.com/chobizzy/ohmyposhmatrix">chobizzy/ohmyposhmatrix</a>
+</footer>
+
+<script>
+  /* ── Matrix rain ── */
+  (function () {
+    const canvas = document.getElementById('rain');
+    const ctx    = canvas.getContext('2d');
+    const CHARS  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()-_=+[]{}|;:,./<>?\\アイウエオカキクケコサシスセソタチツテトナニヌネノ';
+    const FONT_SIZE = 14;
+    let cols, drops;
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+      cols  = Math.floor(canvas.width / FONT_SIZE);
+      drops = Array.from({ length: cols }, () => Math.random() * -100);
+    }
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = FONT_SIZE + 'px monospace';
+
+      for (let i = 0; i < drops.length; i++) {
+        const char = CHARS[Math.floor(Math.random() * CHARS.length)];
+        const y    = drops[i] * FONT_SIZE;
+
+        /* bright head */
+        ctx.fillStyle = '#CCFFCC';
+        ctx.fillText(char, i * FONT_SIZE, y);
+
+        /* dim trail drawn by fade rect above */
+        if (y > 0 && Math.random() > 0.975) {
+          ctx.fillStyle = '#00FF41';
+          ctx.fillText(char, i * FONT_SIZE, y - FONT_SIZE);
+        }
+
+        if (y > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i] += 0.5;
+      }
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+    setInterval(draw, 40);
+  })();
+
+  /* ── Tabs ── */
+  function switchTab(btn, id) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.code-block').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(id).classList.add('active');
+  }
+
+  /* ── Copy ── */
+  function copy(btn) {
+    const code = btn.closest('.code-inner').querySelector('code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'COPIED';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('copied'); }, 1800);
+    });
+  }
+</script>
+</body>
+</html>
