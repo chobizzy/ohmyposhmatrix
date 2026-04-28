@@ -41,7 +41,7 @@ Git dirty state turns **red**:
 
 ## Installation
 
-### Option A — Use directly from GitHub (once public)
+### Option A — Use directly from GitHub
 
 **PowerShell:**
 ```powershell
