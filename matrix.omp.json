@@ -1,0 +1,68 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 4,
+  "final_space": true,
+  "console_title_template": "{{ .Shell }} :: {{ .Folder }}",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "os",
+          "style": "plain",
+          "foreground": "#00FF41",
+          "background": "transparent",
+          "template": " {{ .Icon }} "
+        },
+        {
+          "type": "session",
+          "style": "plain",
+          "foreground": "#00FF41",
+          "background": "transparent",
+          "template": "<#00FF41>{{ .UserName }}</><#008F11>@</>{{ .HostName }}"
+        },
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "#00FF41",
+          "background": "transparent",
+          "template": " <#008F11>[</><#00FF41>{{ .Path }}</><#008F11>]</>",
+          "properties": {
+            "style": "full",
+            "folder_separator_icon": "/"
+          }
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "#00FF41",
+          "background": "transparent",
+          "template": " <#008F11>(</><#00FF41>{{ .HEAD }}{{ if .Working.Changed }} ✗{{ else }} ✓{{ end }}</><#008F11>)</>",
+          "foreground_templates": [
+            "{{ if .Working.Changed }}#FF0000{{ end }}",
+            "{{ if not .Working.Changed }}#00FF41{{ end }}"
+          ],
+          "properties": {
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#00FF41",
+          "background": "transparent",
+          "template": "<#00FF41>>></> "
+        }
+      ]
+    }
+  ]
+}
