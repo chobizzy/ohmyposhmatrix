@@ -45,17 +45,17 @@ Git dirty state turns **red**:
 
 **PowerShell:**
 ```powershell
-oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/<your-username>/ohmyposhmatrix/main/matrix.omp.json' | Invoke-Expression
+oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/chobizzy/ohmyposhmatrix/master/matrix.omp.json' | Invoke-Expression
 ```
 
 **Bash / Zsh:**
 ```bash
-eval "$(oh-my-posh init bash --config 'https://raw.githubusercontent.com/<your-username>/ohmyposhmatrix/main/matrix.omp.json')"
+eval "$(oh-my-posh init bash --config 'https://raw.githubusercontent.com/chobizzy/ohmyposhmatrix/master/matrix.omp.json')"
 ```
 
 **Fish:**
 ```fish
-oh-my-posh init fish --config 'https://raw.githubusercontent.com/<your-username>/ohmyposhmatrix/main/matrix.omp.json' | source
+oh-my-posh init fish --config 'https://raw.githubusercontent.com/chobizzy/ohmyposhmatrix/master/matrix.omp.json' | source
 ```
 
 ### Option B — Local file
