@@ -43,11 +43,7 @@
           "foreground_templates": [
             "{{ if .Working.Changed }}#FF0000{{ end }}",
             "{{ if not .Working.Changed }}#00FF41{{ end }}"
-          ],
-          "properties": {
-            "fetch_status": true,
-            "fetch_upstream_icon": true
-          }
+          ]
         }
       ]
     },
