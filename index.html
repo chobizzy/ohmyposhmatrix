@@ -196,6 +196,21 @@
       flex: 1;
     }
 
+    .profile-steps {
+      border-top: 1px solid var(--green-dark);
+      padding: 10px 0 6px;
+    }
+
+    .profile-steps p {
+      font-size: 0.74rem;
+      color: var(--green-dim);
+      padding: 4px 20px;
+    }
+
+    .profile-steps p code { color: var(--green); }
+
+    .profile-steps .code-inner { padding: 8px 20px; }
+
     .copy-btn {
       flex-shrink: 0;
       background: none;
@@ -411,6 +426,21 @@
       <div class="code-inner">
         <code>oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/chobizzy/ohmyposhmatrix/master/matrix.omp.json' | Invoke-Expression</code>
         <button class="copy-btn" onclick="copy(this)">COPY</button>
+      </div>
+      <div class="profile-steps">
+        <p>To load the theme in every session, add the line above to your PowerShell profile:</p>
+        <p>1. Create the profile if it doesn't exist yet, then open it:</p>
+        <div class="code-inner">
+          <code>if (!(Test-Path $PROFILE)) { New-Item -Path $PROFILE -Type File -Force }; notepad $PROFILE</code>
+          <button class="copy-btn" onclick="copy(this)">COPY</button>
+        </div>
+        <p>2. Paste the line above at the end of the file and save it.</p>
+        <p>3. Reload the profile (or open a new terminal):</p>
+        <div class="code-inner">
+          <code>. $PROFILE</code>
+          <button class="copy-btn" onclick="copy(this)">COPY</button>
+        </div>
+        <p>Script execution error? Run <code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code>.</p>
       </div>
     </div>
 

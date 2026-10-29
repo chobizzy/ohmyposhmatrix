@@ -48,6 +48,24 @@ Git dirty state turns **red**:
 oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/chobizzy/ohmyposhmatrix/master/matrix.omp.json' | Invoke-Expression
 ```
 
+To load the theme in every new PowerShell session, add that line to your PowerShell profile:
+
+1. Create the profile if it doesn't exist yet, then open it:
+   ```powershell
+   if (!(Test-Path $PROFILE)) { New-Item -Path $PROFILE -Type File -Force }
+   notepad $PROFILE
+   ```
+2. Add this line to the end of the file and save it:
+   ```powershell
+   oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/chobizzy/ohmyposhmatrix/master/matrix.omp.json' | Invoke-Expression
+   ```
+3. Reload the profile (or open a new terminal):
+   ```powershell
+   . $PROFILE
+   ```
+
+> If you get a script execution error, allow local scripts with `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
+
 **Bash / Zsh:**
 ```bash
 eval "$(oh-my-posh init bash --config 'https://raw.githubusercontent.com/chobizzy/ohmyposhmatrix/master/matrix.omp.json')"
