@@ -14,6 +14,8 @@
 
 > A Matrix-inspired [oh-my-posh](https://ohmyposh.dev) theme. Neon green on pure black.
 
+**Website:** https://chobizzy.github.io/ohmyposhmatrix/ (live preview and an install guide for each shell)
+
 ---
 
 ## Preview
@@ -66,9 +68,14 @@ To load the theme in every new PowerShell session, add that line to your PowerSh
 
 > If you get a script execution error, allow local scripts with `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`.
 
-**Bash / Zsh:**
+**Bash:**
 ```bash
 eval "$(oh-my-posh init bash --config 'https://raw.githubusercontent.com/chobizzy/ohmyposhmatrix/master/matrix.omp.json')"
+```
+
+**Zsh:**
+```zsh
+eval "$(oh-my-posh init zsh --config 'https://raw.githubusercontent.com/chobizzy/ohmyposhmatrix/master/matrix.omp.json')"
 ```
 
 **Fish:**
@@ -86,9 +93,14 @@ oh-my-posh init fish --config 'https://raw.githubusercontent.com/chobizzy/ohmypo
 oh-my-posh init pwsh --config "$env:USERPROFILE\matrix.omp.json" | Invoke-Expression
 ```
 
-**Bash (`~/.bashrc`) / Zsh (`~/.zshrc`):**
+**Bash (`~/.bashrc`):**
 ```bash
 eval "$(oh-my-posh init bash --config ~/matrix.omp.json)"
+```
+
+**Zsh (`~/.zshrc`):**
+```zsh
+eval "$(oh-my-posh init zsh --config ~/matrix.omp.json)"
 ```
 
 ---
@@ -113,6 +125,40 @@ eval "$(oh-my-posh init bash --config ~/matrix.omp.json)"
 | Accent | `#008F11` | Dark green |
 | Dirty | `#FF0000` | Red (git dirty state) |
 | Background | `#000000` | Pure black (terminal default) |
+
+---
+
+## Website
+
+The theme's site, with an install guide for PowerShell, Bash, Zsh and Fish, is at **https://chobizzy.github.io/ohmyposhmatrix/**.
+
+Its source is in `site/` (built with [Astro](https://astro.build)). The site reads `matrix.omp.json` at build time, so the colors, segment templates and the falling characters always match the theme file.
+
+### Run it locally
+
+Requires Node 22 or newer.
+
+```bash
+cd site
+npm install
+npm run dev       # dev server at http://localhost:4321/ohmyposhmatrix/
+```
+
+To check the production build:
+
+```bash
+npm run build     # static site in site/dist/
+npm run preview   # serves the build at http://localhost:4321/ohmyposhmatrix/
+```
+
+### Deploy
+
+Pushing to `master` deploys the site to GitHub Pages automatically when anything in `site/`, `matrix.omp.json` or the workflow changes (`.github/workflows/deploy-site.yml`). You can also run the **Deploy site** workflow by hand from the repo's Actions tab.
+
+### Edit the content
+
+- All text on the site, including the install commands for each shell: `site/src/data/site.ts`
+- The concept and design decisions: `site/DESIGN.md`
 
 ---
 
