@@ -1,0 +1,15 @@
+---
+// A word the rain writes. Each `.w` is one line (they sit side by side on wide screens when
+// `split` is set, and stack on phones). The DOM text is the no-GL fallback and the GL mask source.
+interface Props { lines: string[]; tag?: 'span' | 'p'; decorative?: boolean; split?: boolean; intro?: boolean }
+const { lines, tag: Tag = 'span', decorative = false, split = false, intro = false } = Astro.props;
+const n = split ? Math.max(...lines.map((l) => l.length)) : lines.join('').length;
+const wide = lines.join('').length;
+---
+<Tag
+  class:list={['rainword', { 'rainword--split': split }]}
+  data-rain-word
+  data-intro={intro ? '' : undefined}
+  aria-hidden={decorative ? 'true' : undefined}
+  style={`--n:${n};--wide:${wide}`}
+>{lines.map((l) => <span class="w">{l}</span>)}</Tag>

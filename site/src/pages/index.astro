@@ -1,0 +1,124 @@
+---
+import Base from '../layouts/Base.astro';
+import RainWord from '../components/RainWord.astro';
+import CopyButton from '../components/CopyButton.astro';
+import Cmd from '../components/Cmd.astro';
+import Fall from '../components/Fall.astro';
+import { site, shells, segments, palette, needs } from '../data/site';
+import { u } from '../data/url';
+import { breakable } from '../data/breakable';
+const first = shells[0];
+---
+<Base path="~">
+  <section class="hero" data-path="~" data-rain="0.8" aria-labelledby="hero-title">
+    <h1 class="hero__title" id="hero-title" aria-label="matrix.omp.json">
+      <RainWord lines={['mat', 'rix']} split intro /><span class="hero__ext">.omp.json</span>
+    </h1>
+    <div class="hero__base">
+      <p class="hero__lede cleared" data-split="lines" data-intro data-delay="0.5">
+        A Matrix-inspired prompt theme for oh-my-posh. Neon green on pure black, four segments and
+        one prompt character, in a single {(site.bytes / 1024).toFixed(1)}&nbsp;KB file.
+      </p>
+      <div class="hero__install cleared">
+        <div class="pick" role="group" aria-label="Your shell">
+          {shells.map((s, i) => (
+            <Fall label={s.slug} class="pick__opt" data-shell-pick={s.slug} aria-pressed={i === 0 ? 'true' : 'false'} />
+          ))}
+        </div>
+        <pre class="hero__cmd"><span class="cmd__pr" aria-hidden="true">&gt;&gt; </span><code data-shell-cmd set:html={breakable(first.init)} /></pre>
+        <div class="hero__act">
+          <CopyButton />
+          <p class="hero__needs">Needs oh-my-posh and a <a class="link" href="#install">Nerd Font</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="segments" class="segs" data-path="~/segments" data-rain="0.28" aria-labelledby="segs-title">
+    <div class="segs__intro">
+      <h2 id="segs-title" class="h2" data-decode>Read it left to right</h2>
+      <p data-split="lines">
+        One line tells you the machine, the user, the folder and the state of your repo. The line
+        under it is yours. Every word below is copied from the theme file.
+      </p>
+    </div>
+    <div class="segs__track" data-segs>
+      <div class="segs__stage">
+        <p class="bigpr" data-bigpr>
+          <span class="sr-only">Example prompt: </span>
+          <span class="bigpr__seg" data-seg="os"><span class="pr__os" data-os aria-hidden="true">&#xE62A;</span></span><span
+            class="bigpr__seg" data-seg="session"><span class="p">you</span><span class="a">@</span><span class="p">localhost</span></span><span
+            class="bigpr__seg" data-seg="path"> <span class="a">[</span><span class="p">~/ohmyposhmatrix</span><span class="a">]</span></span><span
+            class="bigpr__seg" data-seg="git"> <span class="a">(</span><span class="pr__branch"><span aria-hidden="true">&#xE0A0;</span> main <span data-mark>✓</span></span><span class="a">)</span></span>
+          <br /><span class="bigpr__seg" data-seg="text"><span class="p">&gt;&gt;</span></span><span class="cursor" aria-hidden="true"></span>
+        </p>
+        <span class="segs__drop" aria-hidden="true"></span>
+        <ol class="segs__list">
+          {segments.map((s) => (
+            <li class="seg" data-cap={s.type}>
+              <h3 class="seg__type"><code>{s.type}</code></h3>
+              <p class="seg__text">{s.text}</p>
+              <p class="seg__tpl"><span class="sr-only">Template: </span><code>{s.template}</code></p>
+              {s.type === 'git' && (
+                <button type="button" class="seg__toggle ulink" data-dirty-toggle aria-pressed="false">Change a file</button>
+              )}
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="palette" class="field" data-path="~/palette" data-rain="0" data-tone="field" data-tone-end=".band[data-hex='#000000']" aria-labelledby="pal-title">
+    <div class="field__head">
+      <h2 id="pal-title" class="h2" data-decode>Four colors, read straight from the file</h2>
+      <p class="field__hex" aria-hidden="true">#00FF41</p>
+      <p class="field__note"><span class="sr-only">#00FF41, </span><strong>Primary.</strong> User, host, path, branch and the prompt character. This whole section is painted in it.</p>
+    </div>
+    <ul class="bands">
+      {palette.map((p) => (
+        <li class="band" style={`--band:${p.hex}`} data-hex={p.hex} data-reveal="clip">
+          <span class="band__hex">{p.hex}</span>
+          <span class="band__role">{p.role}</span>
+          <span class="band__text">{p.text}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section id="install" class="inst" data-path="~/install" data-rain="0.22" aria-labelledby="inst-title">
+    <div class="inst__head">
+      <h2 id="inst-title" class="h2" data-decode>Install it in one line</h2>
+      <p data-split="lines">
+        Paste a line into your shell to try the theme in the session you have open. Each guide
+        then makes it stick, one profile file at a time.
+      </p>
+    </div>
+    <div class="needs">
+      <h3 class="needs__title">Before you paste</h3>
+      <ol class="needs__list">
+        {needs.map((n) => (
+          <li class="need">
+            <p class="need__name">{n.title}</p>
+            <p class="need__text">{n.text} <a class="link" href={n.link.href}>{n.link.label}</a></p>
+            {n.code.map((c) => <Cmd code={c} context={`the ${c.split(' ')[0]} command`} />)}
+          </li>
+        ))}
+      </ol>
+    </div>
+    <ul class="rows">
+      {shells.map((s) => (
+        <li class="row">
+          <a class="row__link" href={u(`/install/${s.slug}/`)} data-hover-decode>
+            <span class="row__mark" aria-hidden="true">&gt;&gt;</span>
+            <span class="row__name" data-decode-label>{s.name}</span>
+            <span class="row__go">full guide <span class="row__arrow" aria-hidden="true">→</span></span>
+          </a>
+          <p class="row__file"><span class="sr-only">Profile file: </span>{s.profile}</p>
+          <pre class="row__cmd"><code set:html={breakable(s.init)} /></pre>
+          <CopyButton text={s.init} label="Copy" context={`the ${s.name} install line`} class="btn--small" />
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>

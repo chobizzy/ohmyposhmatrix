@@ -1,0 +1,35 @@
+---
+// The theme's real prompt, fixed at the bottom: orientation (the [path] is where you are),
+// a section menu (the path is a button, like tab completion), and status output.
+import { paths } from '../data/site';
+import { u } from '../data/url';
+interface Props { path: string; dirty?: boolean }
+const { path, dirty = false } = Astro.props;
+---
+<aside class:list={['bar', { 'is-dirty': dirty }]} aria-label="Prompt" data-bar>
+  <div class="bar__l1">
+    <span class="pr__os" data-os aria-hidden="true">&#xE62A;</span>
+    <span class="bar__who"><span class="p">you</span><span class="a">@</span><span class="p">localhost</span></span>
+    <span class="bar__where"><span class="a" aria-hidden="true">[</span><button
+        class="bar__path"
+        type="button"
+        aria-expanded="false"
+        aria-controls="cd-menu"
+        data-cd
+      ><span class="sr-only">Current location </span><span data-path>{path}</span><span class="sr-only">. Open the section list</span></button><span class="a" aria-hidden="true">]</span></span>
+    <span class="bar__git"><span class="a">(</span><span class="pr__branch"><span aria-hidden="true">&#xE0A0;</span> main <span data-mark>{dirty ? '✗' : '✓'}</span></span><span class="a">)</span></span>
+  </div>
+  <div class="bar__l2">
+    <span class="p" aria-hidden="true">&gt;&gt;</span>
+    <span class="bar__out" data-out role="status" aria-live="polite"></span><span class="cursor" aria-hidden="true"></span>
+  </div>
+  <button class="bar__rain" type="button" data-rain-toggle aria-pressed="false" hidden>pause rain</button>
+  <nav id="cd-menu" class="cd" aria-label="Sections" hidden>
+    <p class="cd__hint" aria-hidden="true">cd</p>
+    <ul>
+      {paths.map((p) => (
+        <li><a href={u(p.href)} data-cd-link={p.path}><span class="cd__path">{p.path}</span><span class="cd__label">{p.label}</span></a></li>
+      ))}
+    </ul>
+  </nav>
+</aside>

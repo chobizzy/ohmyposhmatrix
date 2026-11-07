@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import RainWord from '../components/RainWord.astro';
+import Fall from '../components/Fall.astro';
+import { paths } from '../data/site';
+import { u } from '../data/url';
+---
+<Base title="No such directory" description="This page isn't part of matrix.omp.json. Every place on the site is listed here, one cd away." path="~/404" dirty finale={false}>
+  <section class="nf" data-path="~/404" data-rain="1" aria-labelledby="nf-title">
+    <RainWord lines={['404']} tag="p" decorative intro />
+    <div class="nf__text cleared">
+      <h1 id="nf-title" class="ghero__title" data-split="lines" data-intro data-delay="0.6">No such directory</h1>
+      <p class="nf__out"><code><span class="nf__err">cd:</span> no such file or directory: <span data-missing>this page</span></code></p>
+      <p>The branch went red because something here isn't where it should be. Every place on this site, sections and guides, is one cd away:</p>
+      <ul class="nf__list">
+        {paths.map((p) => <li><Fall href={u(p.href)} label={p.path} /></li>)}
+      </ul>
+      <a class="btn" href={u('/')}><span class="btn__fill" aria-hidden="true"></span><span class="btn__label">cd ~</span><span class="sr-only"> (home)</span></a>
+    </div>
+  </section>
+</Base>

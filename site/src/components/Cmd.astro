@@ -1,0 +1,11 @@
+---
+// One shell command with its copy button.
+import CopyButton from './CopyButton.astro';
+import { breakable } from '../data/breakable';
+interface Props { code: string; context: string; prefix?: string }
+const { code, context, prefix = '>>' } = Astro.props;
+---
+<div class="cmd">
+  <pre class="cmd__code"><span class="cmd__pr" aria-hidden="true">{prefix} </span><code set:html={breakable(code)} /></pre>
+  <CopyButton text={code} label="Copy" context={context} class="btn--small" />
+</div>

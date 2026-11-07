@@ -1,0 +1,13 @@
+---
+// A link (or toggle button) whose letters fall out and fall back in, one rain column per letter.
+// The falling copy is CSS generated (::after from data-c), so the text exists once in the DOM.
+interface Props { href?: string; label: string; current?: boolean; class?: string; [attr: string]: unknown }
+const { href, label, current = false, class: cls = '', ...rest } = Astro.props;
+const chars = [...label].map((c) => (c === ' ' ? ' ' : c));
+// Scattered delays so letters drop like separate columns, not a left-to-right wave.
+const delay = (i: number) => `--d:${((i * 7 + 3) % 6) * 24}ms`;
+const Tag = href ? 'a' : 'button';
+---
+<Tag class={`fall ${cls}`} href={href} type={href ? undefined : 'button'} aria-label={label} aria-current={current ? 'page' : undefined} {...rest}>
+  <span class="fall__a" aria-hidden="true">{chars.map((c, i) => <span style={delay(i)} data-c={c}>{c}</span>)}</span>
+</Tag>

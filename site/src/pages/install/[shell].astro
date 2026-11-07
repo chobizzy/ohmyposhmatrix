@@ -1,0 +1,92 @@
+---
+import Base from '../../layouts/Base.astro';
+import RainWord from '../../components/RainWord.astro';
+import Cmd from '../../components/Cmd.astro';
+import CopyButton from '../../components/CopyButton.astro';
+import Fall from '../../components/Fall.astro';
+import { shells, needs, type Shell } from '../../data/site';
+import { u } from '../../data/url';
+import { withCode } from '../../data/breakable';
+
+export function getStaticPaths() {
+  return shells.map((s, i) => ({ params: { shell: s.slug }, props: { s, next: shells[(i + 1) % shells.length] } }));
+}
+const { s, next } = Astro.props as { s: Shell; next: Shell };
+const others = shells.filter((o) => o.slug !== s.slug);
+---
+<Base
+  title={`Install in ${s.name}`}
+  description={`Install the matrix.omp.json oh-my-posh theme in ${s.name}: try it with one line, then add it to ${s.profile} so every new session opens on it.`}
+  path={`~/install/${s.slug}`}
+  shell={s.slug}
+  finale={false}
+>
+  <section class="ghero" data-path={`~/install/${s.slug}`} data-rain="1" aria-labelledby="g-title">
+    {/* Four-letter names stack in two lines on phones, so the mosaic stays large enough to read. */}
+    <RainWord lines={s.slug.length === 4 ? [s.slug.slice(0, 2), s.slug.slice(2)] : [s.slug]} split={s.slug.length === 4} tag="p" decorative intro />
+    <div class="ghero__text cleared">
+      <h1 id="g-title" class="ghero__title" data-split="lines" data-intro data-delay="0.6">matrix.omp.json in {s.name}</h1>
+      <p class="ghero__lede" data-split="lines" data-intro data-delay="0.8">{s.summary}</p>
+    </div>
+    <dl class="meta ghero__meta cleared" data-reveal="fade" data-intro data-delay="1">
+      <div><dt>Profile file</dt><dd><code>{s.profile}</code></dd></div>
+      <div><dt>Steps</dt><dd>{s.steps.length}</dd></div>
+      <div><dt>Shell</dt><dd><code>{s.slug}</code></dd></div>
+    </dl>
+  </section>
+
+  <section class="guide" data-path={`~/install/${s.slug}`} data-rain="0.2" aria-labelledby="g-steps">
+    <div class="guide__side">
+      <h2 class="h3">Before you start</h2>
+      <ul class="guide__needs">
+        {needs.map((n) => (
+          <li>
+            <p class="need__name">{n.title}</p>
+            <p class="need__text">{n.text}</p>
+            {n.code.map((c) => <Cmd code={c} context={`the ${c.split(' ')[0]} command`} />)}
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="guide__main">
+      <h2 id="g-steps" class="h2" data-decode>Make it stick</h2>
+      <ol class="steps">
+        {s.steps.map((st, i) => (
+          <li class="step">
+            <p class="step__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
+            <div class="step__body">
+              <p class="step__text"><span class="sr-only">Step {i + 1}. </span>{st.text}</p>
+              {st.code?.map((c, j, all) => <Cmd code={c} context={all.length > 1 ? `step ${i + 1}, line ${j + 1}` : `step ${i + 1}`} prefix={s.slug === 'pwsh' ? 'PS>' : '$'} />)}
+              {st.copy && <CopyButton text={st.copy} label="Copy it again" context={`the line from step 01, for step ${i + 1}`} class="btn--small" />}
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <div class="aside">
+        <h2 class="h3">If it doesn't look right</h2>
+        <p set:html={withCode(s.note)} />
+        <p>Boxes or question marks instead of icons mean your terminal isn't using a Nerd Font yet. Pick the Nerd Font in your terminal's profile settings, then open a new tab.</p>
+      </div>
+
+      <div class="aside">
+        <h2 class="h3">Prefer a local copy</h2>
+        <p>Download the file once and point the init line at it. Your edits stay yours, and the prompt loads without a network request.</p>
+        <Cmd code={s.local.download} context="the download command" prefix={s.slug === 'pwsh' ? 'PS>' : '$'} />
+        <Cmd code={s.local.init} context="the local init line" prefix={s.slug === 'pwsh' ? 'PS>' : '$'} />
+      </div>
+    </div>
+  </section>
+
+  <nav class="next" aria-label="Other shells" data-path={`~/install/${s.slug}`} data-rain="0.5">
+    <a class="next__link" href={u(`/install/${next.slug}/`)} data-hover-decode>
+      <span class="next__label">next shell</span>
+      <span class="next__name" data-decode-label>{next.name}</span>
+      <span class="next__arrow" aria-hidden="true">→</span>
+    </a>
+    <ul class="next__others">
+      {others.filter((o) => o.slug !== next.slug).map((o) => <li><Fall href={u(`/install/${o.slug}/`)} label={`cd ../${o.slug}`} /></li>)}
+      <li><Fall href={u('/#install')} label="cd ~/install" /></li>
+    </ul>
+  </nav>
+</Base>

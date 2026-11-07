@@ -1,0 +1,19 @@
+---
+import Fall from './Fall.astro';
+import { site } from '../data/site';
+import { u } from '../data/url';
+const here = Astro.url.pathname;
+---
+<header class="top" data-top>
+  <!-- Phones get the short name so all four sections stay one tap away. -->
+  <Fall href={u('/')} label={site.name} current={here === u('/')} class="top__brand top__brand--long" />
+  <Fall href={u('/')} label="matrix" current={here === u('/')} class="top__brand top__brand--short" />
+  <nav class="top__nav" aria-label="Main">
+    <ul>
+      <li><Fall href={u('/#segments')} label="segments" /></li>
+      <li><Fall href={u('/#palette')} label="palette" /></li>
+      <li><Fall href={u('/#install')} label="install" current={here.startsWith(u('/install/'))} /></li>
+      <li><Fall href={site.repo} label="github" /></li>
+    </ul>
+  </nav>
+</header>

@@ -1,0 +1,38 @@
+---
+// The finale on every page: the rain writes the prompt character, and the cursor after it is yours.
+import RainWord from './RainWord.astro';
+import CopyButton from './CopyButton.astro';
+import { site, shells } from '../data/site';
+interface Props { shell?: string; finale?: boolean }
+const { shell, finale = true } = Astro.props;
+const own = shells.find((s) => s.slug === shell);
+const year = new Date().getFullYear();
+---
+<footer class:list={['fin', { 'fin--base': !finale }]} data-rain="0.75">
+  {finale && <div class="fin__stage">
+    <div class="fin__mark">
+      <RainWord lines={['>>']} decorative />
+      <span class="fin__cursor cursor" aria-hidden="true"></span>
+    </div>
+    <div class="fin__copy cleared">
+      <h2 class="fin__title" data-decode>Your turn</h2>
+      <p>Copy the line, paste it into {own ? own.name : 'your shell'}, and the next prompt you see is this one.</p>
+      {own
+        ? <CopyButton text={own.init} context={`for ${own.name}`} />
+        : <CopyButton />}
+      <p class="fin__for" aria-hidden="true">for <span data-shell-name>{own ? own.slug : 'pwsh'}</span></p>
+    </div>
+  </div>}
+  <div class="fin__base">
+    <ul class="fin__links">
+      <li><a class="link" href={site.raw}>View the source</a></li>
+      <li><a class="link" href={site.repo}>Star it on GitHub</a></li>
+      <li><a class="link" href={site.readme}>Read the README</a></li>
+      <li><a class="link" href="https://ohmyposh.dev/docs">oh-my-posh docs</a></li>
+    </ul>
+    <p class="fin__small">
+      matrix.omp.json by <a class="ulink" href={`https://github.com/${site.author}`}>{site.author}</a>, MIT license, {year}.
+      Set in JetBrains Mono, icons from Nerd Fonts. The rain is the theme file itself, {site.bytes.toLocaleString('en-US')}&nbsp;bytes of it.
+    </p>
+  </div>
+</footer>

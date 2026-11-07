@@ -1,0 +1,11 @@
+---
+// Copies a command. `text` copies that exact line; without it, the button copies the install line
+// of the shell picked in the hero (src/motion/prompt.ts keeps that choice).
+interface Props { text?: string; label?: string; context?: string; class?: string }
+const { text, label = 'Copy the install line', context, class: cls = '' } = Astro.props;
+---
+<button class={`btn ${cls}`} type="button" data-copy={text} data-copy-current={text ? undefined : ''}>
+  <span class="btn__fill" aria-hidden="true"></span>
+  <span class="btn__label" data-label>{label}</span>
+  {context && <span class="sr-only"> {context}</span>}
+</button>
