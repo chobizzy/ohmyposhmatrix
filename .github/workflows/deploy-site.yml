@@ -1,0 +1,41 @@
+# Build the Astro site in site/ and publish it to GitHub Pages
+# (https://chobizzy.github.io/ohmyposhmatrix/). Runs when the site or the theme changes,
+# since the site reads matrix.omp.json at build time.
+name: Deploy site
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'site/**'
+      - 'matrix.omp.json'
+      - '.github/workflows/deploy-site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: withastro/action@v6
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
